@@ -5,15 +5,15 @@ const Task = (props) => {
 
   return (
     <div
-      className="d-flex justify-content-between border p-2"
+      className="list-group-item d-flex justify-content-between align-items-center"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <p>{props.task.label}</p>
       {isHovered && (
-        <span onClick={props.onRemove} style={{ cursor: "pointer" }}>
+        <button className="btn btn-sm" onClick={props.onRemove}>
           X
-        </span>
+        </button>
       )}
     </div>
   );
