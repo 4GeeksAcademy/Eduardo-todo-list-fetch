@@ -1,26 +1,52 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
+import Task from "./Task";
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
 
-//create your first component
-const Home = () => {
+const ToDoList = () => {
+	const [newTask, setNewTask] = useState("");
+	const [taskList, setTaskList] = useState([]);
+
+	const loadTask = async () => {
+		const response = await fetch("https://playground.4geeks.com/todo/users/Eduardo");
+		const data = await response.json();
+		setTaskList(data.todos);
+	};
+
+	useEffect(()=>{
+		loadTask();
+	},[])
+
+	useEffect(() => {
+		loadTask();
+	}, []);
+
 	return (
-		<div className="text-center">
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
+		<div className="container text-center border col-6 bg-light">
+			<input 
+				type="text" 
+				value={newTask} 
+				placeholder="What do you want to do next?" 
+				onChange={(event) => setNewTask(event.target.value)} 
+				onKeyUp={(event) => {
+					if (event.key === "Enter" && newTask.trim() !== "") {
+						setTaskList([newTask, ...taskList]);
+						setNewTask("");
+					}
+				}}
+			/>
+			{(taskList.length === 0) && <div>No more tasks, time for a drink</div>}
+			{taskList.map((tarea, indice) => (
+				<Task 
+					task={tarea} 
+					key={indice} 
+					onRemove={() => {
+						setTaskList(taskList.filter((_tarea, indiceABorrar) => indice !== indiceABorrar));
+					}}
+				/>
+			))}
+			<p>{taskList.length} items left</p>
 		</div>
 	);
 };
 
-export default Home;
+export default ToDoList;
